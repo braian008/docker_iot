@@ -1,0 +1,73 @@
+services:
+  mariadb:
+    image: mariadb
+    container_name: mariadb
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
+      - TZ=America/Argentina/Buenos_Aires
+    volumes:
+      - ./mariadb:/var/lib/mysql:Z
+    ports:
+      - 3306:3306
+    restart: unless-stopped
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    environment:
+      - PMA_HOST=mariadb
+    ports:
+      - 8080:80
+    depends_on:
+      - mariadb
+  clientemqtt:
+    image: clientemqtt
+    container_name: clientemqtt
+    environment:
+      - TZ=America/Argentina/Buenos_Aires 
+      - SERVIDOR=${SERVIDOR} #Se reemplazará por la env var SERVIDOR defineda en .env
+      - TOPICO=${TOPICO}
+      - MARIADB_SERVER=${MARIADB_SERVER}
+      - MARIADB_USER=${MARIADB_USER}
+      - MARIADB_USER_PASS=${MARIADB_USER_PASS}
+      - MARIADB_DB=${MARIADB_DB}
+    restart: unless-stopped
+    depends_on:
+      - mariadb
+  mosquitto:
+    image: eclipse-mosquitto
+    container_name: mosquitto
+    user: "1000:1000"
+    ports:
+      - 1883:1883
+      - 8883:8883
+    restart: unless-stopped
+    volumes:
+      - ./mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./mosquitto/config:/mosquitto/config
+  grafana:
+    image: grafana/grafana-oss
+    container_name: grafana
+    user: "1000"
+    volumes:
+      - ./grafana:/var/lib/grafana
+    ports:
+      - 3000:3000
+    depends_on:
+      - mariadb
+    environment:
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+    restart: unless-stopped
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    ports:
+      - 9443:9443
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    restart: unless-stopped
+volumes:
+  portainer_data:
