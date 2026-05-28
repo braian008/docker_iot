@@ -23,11 +23,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def acercade(update: Update, context):
     await context.bot.send_message(update.message.chat.id, text="Este bot fue creado para el curso de IoT FIO")
 
-async def kill(update, context):
+async def terremoto(update, context):
     logging.info(update)
     logging.info(context.args)
     if context.args and context.args[0] == '@e':
-        await context.bot.send_animation(update.message.chat.id, "CgACAgEAAxkBAAICI2oYKdAqh4YkBCLifiVJZlRXy74-AAKUBwACZ_PBRLgV_qZf-9kGOwQ")
+        await context.bot.send_animation(update.message.chat.id, "CAACAgIAAxkBAAMIahiDaK3x4S8UDudC20i66Ny6p1UAAggAA8A2TxNvbCYL3hqbaTsE")
         await asyncio.sleep(6)
         await context.bot.send_message(update.message.chat.id, text="¡¡¡Ahora están todos muertos!!!")
     else:
@@ -37,7 +37,7 @@ def main():
     application = Application.builder().token(token).build()
     application.add_handler(CommandHandler('start', start))
     application.add_handler(CommandHandler('acercade', acercade))
-    application.add_handler(CommandHandler('kill', kill))
+    application.add_handler(CommandHandler('terremoto', terremoto))
     application.run_polling()
 
 if __name__ == '__main__':
