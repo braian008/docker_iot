@@ -89,7 +89,7 @@ services:
       - URL=${DOMINIO}
       - VALIDATION=dns
       - DNSPLUGIN=duckdns
-      - SUBDOMAINS=
+      - SUBDOMAINS=wildcard
     volumes:
       - ./swag:/config
     ports:
